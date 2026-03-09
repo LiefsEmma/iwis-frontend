@@ -4,10 +4,11 @@
   --page-bg: #e9eef2;
   --text-main: #1b2834;
   --surface: #ffffff;
-  --header-start: #63676d;
-  --header-end: #4f5359;
-  --header-border: #474b50;
-  --nav-muted: #d6dbe2;
+  --header-start: #1768ac;
+  --header-end: #1b3f7a;
+  --header-accent: #1aa6b7;
+  --header-border: #143468;
+  --nav-muted: #d4e9ff;
   --nav-active: #ffffff;
 }
 
@@ -36,9 +37,20 @@ body {
 }
 
 .iwis-header {
-  background: linear-gradient(180deg, var(--header-start), var(--header-end));
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(130deg, var(--header-start) 0%, var(--header-end) 56%, var(--header-accent) 120%);
   border-bottom: 1px solid var(--header-border);
-  box-shadow: 0 5px 18px rgba(26, 32, 39, 0.22);
+  box-shadow: 0 8px 24px rgba(21, 53, 105, 0.3);
+}
+
+.iwis-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% -75%, rgba(255, 255, 255, 0.34), transparent 62%);
+  pointer-events: none;
 }
 
 .iwis-header__inner {
@@ -78,16 +90,17 @@ body {
   font-size: 1.06rem;
   font-weight: 500;
   border-bottom: 3px solid transparent;
-  transition: color 160ms ease, border-color 160ms ease;
+  transition: color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .iwis-nav__link:hover {
   color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .iwis-nav__link.is-active {
   color: var(--nav-active);
-  border-bottom-color: #ffffff;
+  border-bottom-color: #98e6ff;
 }
 
 .page-container {
