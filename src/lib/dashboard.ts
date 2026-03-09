@@ -15,6 +15,8 @@ export interface CurrentReadings {
   dissolvedOxygen: number;
 }
 
+export type SensorSnapshot = CurrentReadings;
+
 export interface TrendSeries {
   unit: string;
   points: number[];
@@ -32,12 +34,33 @@ export interface RecentReport {
   summary: string;
 }
 
-export interface MapPoint {
+export interface SensorMapPoint {
   id: string;
   label: string;
-  type: "sensor" | "report";
+  type: "sensor";
   lat: number;
   lng: number;
+  latestReadings: SensorSnapshot;
+}
+
+export interface ReportMapPoint {
+  id: string;
+  label: string;
+  type: "report";
+  lat: number;
+  lng: number;
+  reportSummary: string;
+  reportedAt: string;
+}
+
+export type MapPoint = SensorMapPoint | ReportMapPoint;
+
+export interface PollutionHotspot {
+  id: string;
+  lat: number;
+  lng: number;
+  intensity: "low" | "medium" | "high";
+  radiusMeters: number;
 }
 
 export interface DashboardData {
@@ -48,6 +71,7 @@ export interface DashboardData {
   weather: WeatherConditions;
   recentReports: RecentReport[];
   mapPoints: MapPoint[];
+  pollutionHotspots: PollutionHotspot[];
   indices: {
     correlation: number;
     pollutionHeatmap: number;
@@ -61,6 +85,12 @@ const HARTBEESPOORT_DAM_COORDS = {
 
 function getMockData(window: TimeWindow): DashboardData {
   const longWindow = window === "30d";
+  const sensorBaseline: SensorSnapshot = {
+    ph: longWindow ? 7.1 : 7.2,
+    nitrate: longWindow ? 7.6 : 8,
+    temperature: longWindow ? 22 : 23,
+    dissolvedOxygen: longWindow ? 5.8 : 5.6,
+  };
 
   return {
     locationName: "Hartbeespoort Dam",
@@ -72,10 +102,7 @@ function getMockData(window: TimeWindow): DashboardData {
       },
     ],
     currentReadings: {
-      ph: longWindow ? 7.1 : 7.2,
-      nitrate: longWindow ? 7.6 : 8,
-      temperature: longWindow ? 22 : 23,
-      dissolvedOxygen: longWindow ? 5.8 : 5.6,
+      ...sensorBaseline,
     },
     trends: {
       nitrate: {
@@ -118,25 +145,73 @@ function getMockData(window: TimeWindow): DashboardData {
     ],
     mapPoints: [
       {
-        id: "point-1",
-        label: "Sensor",
+        id: "sensor-north-shore",
+        label: "North Shore Sensor",
         type: "sensor",
         lat: HARTBEESPOORT_DAM_COORDS.lat + 0.011,
         lng: HARTBEESPOORT_DAM_COORDS.lng - 0.03,
+        latestReadings: {
+          ph: sensorBaseline.ph,
+          nitrate: sensorBaseline.nitrate,
+          temperature: sensorBaseline.temperature,
+          dissolvedOxygen: sensorBaseline.dissolvedOxygen,
+        },
       },
       {
-        id: "point-2",
-        label: "Report",
+        id: "sensor-central-basin",
+        label: "Central Basin Sensor",
+        type: "sensor",
+        lat: HARTBEESPOORT_DAM_COORDS.lat - 0.004,
+        lng: HARTBEESPOORT_DAM_COORDS.lng + 0.006,
+        latestReadings: {
+          ph: longWindow ? 7 : 7.1,
+          nitrate: longWindow ? 8.1 : 8.4,
+          temperature: longWindow ? 22.4 : 23.2,
+          dissolvedOxygen: longWindow ? 5.7 : 5.4,
+        },
+      },
+      {
+        id: "report-east-bay",
+        label: "Citizen Report - East Bay",
         type: "report",
         lat: HARTBEESPOORT_DAM_COORDS.lat - 0.021,
         lng: HARTBEESPOORT_DAM_COORDS.lng + 0.04,
+        reportSummary:
+          "Floating debris and algae accumulation observed near the eastern shoreline.",
+        reportedAt: "2026-03-08T14:22:00Z",
       },
       {
-        id: "point-3",
-        label: "Report",
+        id: "report-west-inlet",
+        label: "Citizen Report - West Inlet",
         type: "report",
         lat: HARTBEESPOORT_DAM_COORDS.lat + 0.016,
         lng: HARTBEESPOORT_DAM_COORDS.lng + 0.012,
+        reportSummary:
+          "Possible sewage inflow odor detected near the west inlet after rainfall.",
+        reportedAt: "2026-03-09T08:05:00Z",
+      },
+    ],
+    pollutionHotspots: [
+      {
+        id: "hotspot-east-shore",
+        lat: HARTBEESPOORT_DAM_COORDS.lat - 0.014,
+        lng: HARTBEESPOORT_DAM_COORDS.lng + 0.028,
+        intensity: "high",
+        radiusMeters: 640,
+      },
+      {
+        id: "hotspot-central",
+        lat: HARTBEESPOORT_DAM_COORDS.lat - 0.002,
+        lng: HARTBEESPOORT_DAM_COORDS.lng + 0.004,
+        intensity: "medium",
+        radiusMeters: 520,
+      },
+      {
+        id: "hotspot-northwest",
+        lat: HARTBEESPOORT_DAM_COORDS.lat + 0.011,
+        lng: HARTBEESPOORT_DAM_COORDS.lng - 0.019,
+        intensity: "low",
+        radiusMeters: 430,
       },
     ],
     indices: {
@@ -157,7 +232,9 @@ function isDashboardData(payload: unknown): payload is DashboardData {
       candidate.currentReadings &&
       candidate.trends &&
       candidate.weather &&
-      candidate.recentReports,
+      Array.isArray(candidate.recentReports) &&
+      Array.isArray(candidate.mapPoints) &&
+      Array.isArray(candidate.pollutionHotspots),
   );
 }
 

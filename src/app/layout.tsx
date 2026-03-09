@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import AppHeader from "@/components/AppHeader";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="iwis-shell">

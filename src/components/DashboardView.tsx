@@ -79,6 +79,12 @@ export default function DashboardView() {
     () => buildChartPoints(selectedTrend?.points ?? []),
     [selectedTrend],
   );
+  const sensorCount =
+    dashboardData?.mapPoints.filter((point) => point.type === "sensor").length ??
+    0;
+  const reportCount =
+    dashboardData?.mapPoints.filter((point) => point.type === "report").length ??
+    0;
 
   return (
     <section className="dashboard-layout">
@@ -101,24 +107,30 @@ export default function DashboardView() {
             </div>
           </header>
 
-          <GoogleHartbeespoortMap />
+          <GoogleHartbeespoortMap
+            mapPoints={dashboardData?.mapPoints ?? []}
+            pollutionHotspots={dashboardData?.pollutionHotspots ?? []}
+          />
 
           <div className="map-footer-row">
-            <div className="map-legend">
-              <span>Low</span>
-              <div className="map-legend-scale" />
-              <span>High</span>
+            <div className="map-legend" aria-label="Pollution heatmap legend">
+              <span className="legend-item">
+                <span className="legend-swatch legend-low" />
+                Low
+              </span>
+              <span className="legend-item">
+                <span className="legend-swatch legend-medium" />
+                Medium
+              </span>
+              <span className="legend-item">
+                <span className="legend-swatch legend-high" />
+                High
+              </span>
             </div>
 
             <div className="map-tags">
-              {dashboardData?.mapPoints.map((point) => (
-                <span
-                  key={point.id}
-                  className={`map-tag ${point.type === "sensor" ? "is-sensor" : "is-report"}`}
-                >
-                  {point.label}
-                </span>
-              ))}
+              <span className="map-tag is-sensor">{sensorCount} Sensor markers</span>
+              <span className="map-tag is-report">{reportCount} Report markers</span>
             </div>
           </div>
         </article>
