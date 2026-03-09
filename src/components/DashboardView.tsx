@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import GoogleHartbeespoortMap from "@/components/GoogleHartbeespoortMap";
 import {
@@ -161,7 +162,12 @@ export default function DashboardView() {
             </div>
 
             <aside className="recent-reports-panel">
-              <h4 className="panel-title">Recent Reports</h4>
+              <div className="recent-reports-panel__header">
+                <h4 className="panel-title">Recent Reports</h4>
+                <Link href="/reports" className="reports-link-btn">
+                  View all reports
+                </Link>
+              </div>
               <ul className="recent-reports-list">
                 {dashboardData?.recentReports.map((report) => (
                   <li key={report.id} className="recent-report-item">
