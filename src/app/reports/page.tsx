@@ -3,6 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { type CitizenReport, fetchReports } from "@/lib/reports";
 
@@ -31,10 +32,17 @@ function previewDescription(value: string): string {
 }
 
 export default function ReportsPage() {
+  const router = useRouter();
+  const [requestedReportId, setRequestedReportId] = useState<string | null>(null);
   const [reports, setReports] = useState<CitizenReport[]>([]);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setRequestedReportId(params.get("reportId"));
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,13 +53,6 @@ export default function ReportsPage() {
 
         if (!cancelled) {
           setReports(data);
-          setSelectedReportId((current) => {
-            if (current && data.some((report) => report.id === current)) {
-              return current;
-            }
-
-            return data[0]?.id ?? null;
-          });
           setLoadError(null);
         }
       } catch {
@@ -75,6 +76,35 @@ export default function ReportsPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (reports.length === 0) {
+      setSelectedReportId(null);
+      return;
+    }
+
+    if (requestedReportId && reports.some((report) => report.id === requestedReportId)) {
+      setSelectedReportId(requestedReportId);
+      return;
+    }
+
+    setSelectedReportId((current) => {
+      if (current && reports.some((report) => report.id === current)) {
+        return current;
+      }
+
+      return reports[0]?.id ?? null;
+    });
+  }, [reports, requestedReportId]);
+
+  function handleSelectReport(reportId: string) {
+    setSelectedReportId(reportId);
+    setRequestedReportId(reportId);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("reportId", reportId);
+    router.replace(`/reports?${params.toString()}`, { scroll: false });
+  }
+
   const selectedReport = useMemo(
     () => reports.find((report) => report.id === selectedReportId) ?? null,
     [reports, selectedReportId],
@@ -90,9 +120,14 @@ export default function ReportsPage() {
             to read the full report details.
           </p>
         </div>
-        <Link className="reports-page__dashboard-link" href="/">
-          Back to Dashboard
-        </Link>
+        <div className="reports-page__actions">
+          <Link className="reports-page__create-link" href="/reports/new">
+            Create Report
+          </Link>
+          <Link className="reports-page__dashboard-link" href="/">
+            Back to Dashboard
+          </Link>
+        </div>
       </header>
 
       {isLoading && <p className="state-text">Loading reports...</p>}
@@ -110,7 +145,7 @@ export default function ReportsPage() {
               <ReportsLocationMap
                 reports={reports}
                 selectedReportId={selectedReportId}
-                onSelectReport={setSelectedReportId}
+                onSelectReport={handleSelectReport}
               />
             </div>
           </article>
@@ -158,7 +193,7 @@ export default function ReportsPage() {
                     <button
                       type="button"
                       className={`reports-list__item ${isSelected ? "is-selected" : ""}`}
-                      onClick={() => setSelectedReportId(report.id)}
+                      onClick={() => handleSelectReport(report.id)}
                     >
                       <div className="reports-list__meta">
                         <strong>{report.location.area}</strong>

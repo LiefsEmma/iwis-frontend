@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import GoogleHartbeespoortMap from "@/components/GoogleHartbeespoortMap";
 import {
   type DashboardData,
@@ -38,11 +39,18 @@ function buildChartPoints(values: number[]): string {
 }
 
 export default function DashboardView() {
+  const router = useRouter();
   const [timeWindow, setTimeWindow] = useState<TimeWindow>("24h");
   const [metric, setMetric] = useState<TrendMetric>("nitrate");
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const handleReportMarkerClick = useCallback(
+    (reportId: string) => {
+      router.push(`/reports?reportId=${encodeURIComponent(reportId)}`);
+    },
+    [router],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -110,6 +118,7 @@ export default function DashboardView() {
           <GoogleHartbeespoortMap
             mapPoints={dashboardData?.mapPoints ?? []}
             pollutionHotspots={dashboardData?.pollutionHotspots ?? []}
+            onReportMarkerClick={handleReportMarkerClick}
           />
 
           <div className="map-footer-row">
@@ -183,7 +192,11 @@ export default function DashboardView() {
               <ul className="recent-reports-list">
                 {dashboardData?.recentReports.map((report) => (
                   <li key={report.id} className="recent-report-item">
-                    <h5>{report.title}</h5>
+                    <h5>
+                      <Link href={`/reports?reportId=${encodeURIComponent(report.id)}`}>
+                        {report.title}
+                      </Link>
+                    </h5>
                     <p>{report.summary}</p>
                   </li>
                 ))}

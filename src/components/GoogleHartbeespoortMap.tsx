@@ -7,6 +7,7 @@ interface GoogleHartbeespoortMapProps {
   title?: string;
   mapPoints: MapPoint[];
   pollutionHotspots: PollutionHotspot[];
+  onReportMarkerClick?: (reportId: string) => void;
 }
 
 const MAP_CENTER: [number, number] = [-25.7343, 27.8587];
@@ -69,6 +70,7 @@ export default function GoogleHartbeespoortMap({
   title = "Hartbeespoort Dam map",
   mapPoints,
   pollutionHotspots,
+  onReportMarkerClick,
 }: GoogleHartbeespoortMapProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
@@ -125,6 +127,12 @@ export default function GoogleHartbeespoortMap({
           offset: [0, -8],
         });
 
+        if (point.type === "report" && onReportMarkerClick) {
+          marker.on("click", () => {
+            onReportMarkerClick(point.id);
+          });
+        }
+
         marker.bindPopup(
           point.type === "sensor"
             ? buildSensorPopup(point)
@@ -148,7 +156,7 @@ export default function GoogleHartbeespoortMap({
       isDisposed = true;
       mapInstance?.remove();
     };
-  }, [mapPoints, pollutionHotspots]);
+  }, [mapPoints, onReportMarkerClick, pollutionHotspots]);
 
   return (
     <div className="google-map-wrap" role="region" aria-label={title}>

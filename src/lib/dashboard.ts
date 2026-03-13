@@ -1,3 +1,5 @@
+import { type CitizenReport, fetchReports } from "@/lib/reports";
+
 export type TimeWindow = "24h" | "30d";
 
 export type TrendMetric = "nitrate" | "phosphate" | "temperature";
@@ -129,20 +131,7 @@ function getMockData(window: TimeWindow): DashboardData {
       airTemp: 24,
       windDirection: "NW",
     },
-    recentReports: [
-      {
-        id: "report-1",
-        title: "Hyacinth Sighting Near North Shore",
-        summary:
-          "Citizen reported sighting of water hyacinths near the north shore.",
-      },
-      {
-        id: "report-2",
-        title: "Algae Bloom Report by Citizen",
-        summary:
-          "Citizen reported algae bloom near the dam's central basin.",
-      },
-    ],
+    recentReports: [],
     mapPoints: [
       {
         id: "sensor-north-shore",
@@ -169,26 +158,6 @@ function getMockData(window: TimeWindow): DashboardData {
           temperature: longWindow ? 22.4 : 23.2,
           dissolvedOxygen: longWindow ? 5.7 : 5.4,
         },
-      },
-      {
-        id: "report-east-bay",
-        label: "Citizen Report - East Bay",
-        type: "report",
-        lat: HARTBEESPOORT_DAM_COORDS.lat - 0.021,
-        lng: HARTBEESPOORT_DAM_COORDS.lng + 0.04,
-        reportSummary:
-          "Floating debris and algae accumulation observed near the eastern shoreline.",
-        reportedAt: "2026-03-08T14:22:00Z",
-      },
-      {
-        id: "report-west-inlet",
-        label: "Citizen Report - West Inlet",
-        type: "report",
-        lat: HARTBEESPOORT_DAM_COORDS.lat + 0.016,
-        lng: HARTBEESPOORT_DAM_COORDS.lng + 0.012,
-        reportSummary:
-          "Possible sewage inflow odor detected near the west inlet after rainfall.",
-        reportedAt: "2026-03-09T08:05:00Z",
       },
     ],
     pollutionHotspots: [
@@ -218,6 +187,49 @@ function getMockData(window: TimeWindow): DashboardData {
       correlation: longWindow ? 0.81 : 0.76,
       pollutionHeatmap: longWindow ? 67 : 72,
     },
+  };
+}
+
+function getShortSummary(text: string, maxLength = 92): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
+function mapCitizenReportsToMapPoints(reports: CitizenReport[]): ReportMapPoint[] {
+  return reports.map((report) => ({
+    id: report.id,
+    label: report.title,
+    type: "report",
+    lat: report.location.lat,
+    lng: report.location.lng,
+    reportSummary: report.description,
+    reportedAt: report.submittedAt,
+  }));
+}
+
+function mapCitizenReportsToRecentReports(reports: CitizenReport[]): RecentReport[] {
+  return reports.slice(0, 3).map((report) => ({
+    id: report.id,
+    title: report.title,
+    summary: getShortSummary(report.description),
+  }));
+}
+
+function mergeReportsIntoDashboardData(
+  dashboardData: DashboardData,
+  reports: CitizenReport[],
+): DashboardData {
+  const sensorMapPoints = dashboardData.mapPoints.filter(
+    (point): point is SensorMapPoint => point.type === "sensor",
+  );
+
+  return {
+    ...dashboardData,
+    mapPoints: [...sensorMapPoints, ...mapCitizenReportsToMapPoints(reports)],
+    recentReports: mapCitizenReportsToRecentReports(reports),
   };
 }
 
@@ -264,9 +276,12 @@ async function fetchDashboardFromBackend(
 
 export async function fetchDashboardData(window: TimeWindow): Promise<DashboardData> {
   const backendData = await fetchDashboardFromBackend(window);
-  if (backendData) {
-    return backendData;
-  }
+  const baseData = backendData ?? getMockData(window);
 
-  return getMockData(window);
+  try {
+    const reports = await fetchReports();
+    return mergeReportsIntoDashboardData(baseData, reports);
+  } catch {
+    return baseData;
+  }
 }
