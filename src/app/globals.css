@@ -905,6 +905,325 @@ body {
   padding: 10px 12px;
 }
 
+.analysis-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.analysis-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.analysis-subtitle {
+  margin: 6px 0 0;
+  max-width: 64ch;
+  color: #4a647d;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.analysis-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.analysis-kpi {
+  border: 1px solid #d4dfeb;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fcfdff 0%, #f4f9ff 100%);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.analysis-kpi span {
+  color: #5e7488;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.analysis-kpi strong {
+  color: #1d4368;
+  font-size: 1.32rem;
+  line-height: 1.2;
+}
+
+.analysis-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(260px, 1fr);
+  gap: 14px;
+}
+
+.analysis-main-column,
+.analysis-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.analysis-block,
+.analysis-filters-card,
+.analysis-summary-card {
+  border: 1px solid #d0dce8;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(21, 48, 77, 0.09);
+  padding: 12px;
+}
+
+.analysis-block-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.analysis-block-header p {
+  margin: 4px 0 0;
+  color: #5e748b;
+  font-size: 0.79rem;
+  line-height: 1.4;
+}
+
+.analysis-block-header h3,
+.analysis-filters-card h3,
+.analysis-summary-card h3 {
+  margin: 0;
+  color: #2d475e;
+  font-size: 1.04rem;
+}
+
+.analysis-block-header span {
+  color: #5f768d;
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.analysis-inline-controls {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.analysis-inline-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #5f7286;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.analysis-inline-controls select,
+.analysis-filter-group select {
+  border: 1px solid #ccd8e3;
+  border-radius: 6px;
+  background: #fbfdff;
+  color: #28435b;
+  min-height: 32px;
+  padding: 5px 8px;
+  font-size: 0.83rem;
+}
+
+.analysis-inline-controls select:focus,
+.analysis-filter-group select:focus {
+  outline: 2px solid #99bfdf;
+  outline-offset: 0;
+}
+
+.analysis-matrix-wrap {
+  overflow: auto;
+  border: 1px solid #d3deea;
+  border-radius: 8px;
+}
+
+.analysis-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.analysis-matrix th,
+.analysis-matrix td {
+  border: 1px solid #d6e1eb;
+  text-align: center;
+  min-width: 72px;
+  height: 48px;
+  padding: 6px;
+  font-size: 0.82rem;
+}
+
+.analysis-matrix th {
+  background: #f3f7fb;
+  color: #33526c;
+  font-weight: 700;
+}
+
+.analysis-matrix th[scope="row"] {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.analysis-matrix td {
+  color: #13314f;
+  font-weight: 700;
+}
+
+.analysis-matrix td.is-strong {
+  box-shadow: inset 0 0 0 2px rgba(22, 73, 118, 0.38);
+}
+
+.analysis-scatter-wrap {
+  border: 1px solid #d5e0eb;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fbfdff;
+}
+
+.analysis-scatter-meta {
+  margin: -2px 0 10px;
+  color: #5b7289;
+  font-size: 0.8rem;
+}
+
+.analysis-scatter-svg {
+  width: 100%;
+  display: block;
+}
+
+.analysis-gridline {
+  stroke: #d8e3ec;
+  stroke-width: 1;
+}
+
+.analysis-dot {
+  fill: #4f7395;
+  opacity: 0.75;
+}
+
+.analysis-trendline {
+  stroke: #1e578a;
+  stroke-width: 2.4;
+}
+
+.analysis-axis {
+  stroke: #6a7f92;
+  stroke-width: 1.2;
+}
+
+.analysis-empty {
+  margin: 0;
+  color: #577088;
+  font-size: 0.88rem;
+}
+
+.analysis-filter-group {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analysis-filter-group label,
+.analysis-filter-label {
+  color: #39546c;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.analysis-filter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.analysis-all-btn {
+  border: 1px solid #c8d8e7;
+  border-radius: 999px;
+  background: #f4f9ff;
+  color: #2b587f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+
+.analysis-all-btn:hover:not(:disabled) {
+  background: #e8f2ff;
+}
+
+.analysis-all-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.analysis-filter-group > label {
+  margin-bottom: -2px;
+}
+
+.analysis-radio-list,
+.analysis-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.analysis-radio-list label,
+.analysis-checkbox-list label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: #516b82;
+  font-weight: 500;
+}
+
+.analysis-radio-list input,
+.analysis-checkbox-list input {
+  accent-color: #2b638f;
+}
+
+.analysis-note {
+  margin: 2px 0 0;
+  color: #60798f;
+  font-size: 0.76rem;
+}
+
+.analysis-summary-grid {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analysis-summary-grid div {
+  border: 1px solid #d7e2ec;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #f8fbff;
+}
+
+.analysis-summary-grid span {
+  color: #5f7488;
+  font-size: 0.79rem;
+}
+
+.analysis-summary-grid strong {
+  color: #23425f;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 900px) {
   .iwis-header__inner {
     min-height: auto;
@@ -996,5 +1315,33 @@ body {
 
   .readings-grid {
     grid-template-columns: 1fr;
+  }
+
+  .analysis-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .analysis-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analysis-inline-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .analysis-inline-controls label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .analysis-inline-controls select,
+  .analysis-filter-group select {
+    width: 100%;
   }
 }
