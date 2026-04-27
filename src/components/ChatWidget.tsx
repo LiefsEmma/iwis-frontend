@@ -43,6 +43,12 @@ export default function ChatWidget() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-20)));
   }, [messages]);
 
+  function handleClearChat() {
+    setMessages([]);
+    setInput("");
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const message = input.trim();
@@ -89,14 +95,24 @@ export default function ChatWidget() {
         <section className="chat-widget-panel" aria-label="IWIS chatbot">
           <header className="chat-widget-header">
             <h2>IWIS Assistant</h2>
-            <button
-              type="button"
-              className="chat-widget-close"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close chat"
-            >
-              ×
-            </button>
+            <div className="chat-widget-header-actions">
+              <button
+                type="button"
+                className="chat-widget-secondary"
+                onClick={handleClearChat}
+                disabled={loading || messages.length === 0}
+              >
+                New chat
+              </button>
+              <button
+                type="button"
+                className="chat-widget-close"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close chat"
+              >
+                ×
+              </button>
+            </div>
           </header>
 
           <div className="chat-widget-messages">
