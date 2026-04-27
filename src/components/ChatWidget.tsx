@@ -103,8 +103,10 @@ export default function ChatWidget() {
                 className="chat-widget-secondary"
                 onClick={handleClearChat}
                 disabled={loading || messages.length === 0}
+                aria-label="Start a new chat"
+                title="Start a new chat"
               >
-                New chat
+                +
               </button>
               <button
                 type="button"

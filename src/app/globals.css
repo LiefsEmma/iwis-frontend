@@ -311,18 +311,28 @@ body {
 .chat-widget-header-actions {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .chat-widget-secondary {
   border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 8px;
-  padding: 6px 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #ffffff;
   background: rgba(255, 255, 255, 0.12);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.chat-widget-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .chat-widget-secondary:disabled {
@@ -334,10 +344,14 @@ body {
   border: none;
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: 999px;
   color: #ffffff;
   background: rgba(255, 255, 255, 0.16);
   cursor: pointer;
+}
+
+.chat-widget-close:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .chat-widget-messages {
