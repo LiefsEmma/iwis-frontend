@@ -75,14 +75,16 @@ export default function ChatWidget() {
       }
 
       const data = (await response.json()) as ChatApiResponse;
-      setMessages((prev) => [...prev, { role: "assistant", content: data.bot_response }].slice(-20));
+      const assistantMessage: ChatMessage = { role: "assistant", content: data.bot_response };
+      setMessages((prev) => [...prev, assistantMessage].slice(-20));
     } catch {
+      const fallbackMessage: ChatMessage = {
+        role: "assistant",
+        content: "Er ging iets mis bij het ophalen van een antwoord. Probeer opnieuw.",
+      };
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: "Er ging iets mis bij het ophalen van een antwoord. Probeer opnieuw.",
-        },
+        fallbackMessage,
       ]);
     } finally {
       setLoading(false);
